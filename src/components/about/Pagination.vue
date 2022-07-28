@@ -1,0 +1,93 @@
+<template>
+  <div :class="{ hidden: hidden }" class="pagination-container">
+    <el-pagination
+      :current-page.sync="currentPage"
+      :page-size.sync="pageSize"
+      :layout="layout"
+      :page-sizes="pageSizes"
+      :pager-count="7"
+      :total="total"
+      v-bind="$attrs"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    />
+  </div>
+</template>
+
+<script>
+import { scrollTo } from "@/assets/js/scroll-to";
+
+export default {
+  name: "PaginationC",
+  props: {
+    total: {
+      required: true,
+      type: Number,
+    },
+    page: {
+      type: Number,
+      default: 1,
+    },
+    limit: {
+      type: Number,
+      default: 12,
+    },
+    pageSizes: {
+      type: Array,
+      default() {
+        return [3, 6];
+      },
+    },
+
+    layout: {
+      type: String,
+      default: "total, sizes, prev, pager, next, jumper",
+    },
+    hidden: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  computed: {
+    currentPage: {
+      get() {
+        return this.page;
+      },
+      set(val) {
+        this.$emit("update:page", val);
+      },
+    },
+    pageSize: {
+      get() {
+        return this.limit;
+      },
+      set(val) {
+        this.$emit("update:limit", val);
+      },
+    },
+  },
+  methods: {
+    handleSizeChange(val) {
+      this.$emit("pagination", { page: this.currentPage, limit: val });
+      scrollTo(0, 800);
+    },
+    handleCurrentChange(val) {
+      this.$emit("pagination", { page: val, limit: this.pageSize });
+      scrollTo(0, 800);
+    },
+  },
+};
+</script>
+
+<style scoped>
+.pagination-container {
+  background: #fff;
+  padding: 20px 0;
+  margin-bottom: 50px;
+  display: flex;
+  justify-content: center;
+}
+.pagination-container.hidden {
+  display: none;
+}
+</style>
